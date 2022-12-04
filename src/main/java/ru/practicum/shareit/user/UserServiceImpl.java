@@ -26,6 +26,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    private void checkOnValid(User user) {
+        if (user.getName() == null || user.getEmail() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Override
     public User add(User user) {
         checkOnValid(user);
@@ -57,11 +63,5 @@ public class UserServiceImpl implements UserService {
     public void deleteAll() {
         userRepository.deleteAll();
         log.info("удалены все пользователи");
-    }
-
-    private void checkOnValid(User user) {
-        if (user.getName() == null || user.getEmail() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
     }
 }
