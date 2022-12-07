@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.exceptions.ResponseValidateException;
 
 import java.util.Collection;
 
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     private void checkOnValid(User user) {
         if (user.getName() == null || user.getEmail() == null || userRepository.existsByEmail(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseValidateException("ошибка");
         }
     }
 }

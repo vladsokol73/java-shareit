@@ -36,7 +36,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse responseStatusException(final ResponseStatusException e) {
+    public ErrorResponse responseValidateException(final ResponseValidateException e) {
         return new ErrorResponse(e.getMessage());
     }
 }
