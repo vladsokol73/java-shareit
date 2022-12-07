@@ -14,7 +14,6 @@ public class UserDto {
     @Pattern(regexp = "\\S+", message = "name не может содержать пробелов")
     private String name;
 
-    @NotBlank(message = "email не может быть пустым")
     @Email(message = "некорректный e-mail")
     private String email;
 }

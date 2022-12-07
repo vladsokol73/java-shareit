@@ -20,7 +20,6 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    @NotBlank(message = "емайл не может быть пустым")
     @Email(message = "неверный формат емайл")
     private String email;
 }

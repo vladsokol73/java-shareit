@@ -30,6 +30,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User add(User user) {
         checkOnValid(user);
+        checkOnDuplicate(user);
+        checkOnBlankEmail(user);
         log.info("добавлен пользователь /{}/", user);
         return userRepository.save(user);
 
@@ -37,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user, Integer id) {
+        checkOnBlankEmail(user);
         User userUpd = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (user.getEmail() != null) {
             userUpd.setEmail(user.getEmail());
@@ -68,6 +71,12 @@ public class UserServiceImpl implements UserService {
 
     private void checkOnDuplicate(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void checkOnBlankEmail(User user) {
+        if (user.getEmail().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
