@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Email;
 import java.util.Collection;
 
 @Service
@@ -24,12 +25,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Collection<User> getAll() {
         return userRepository.findAll();
-    }
-
-    private void checkOnValid(User user) {
-        if (user.getName() == null || user.getEmail() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
     }
 
     @Override
@@ -63,5 +58,11 @@ public class UserServiceImpl implements UserService {
     public void deleteAll() {
         userRepository.deleteAll();
         log.info("удалены все пользователи");
+    }
+
+    private void checkOnValid(User user) {
+        if (user.getName() == null || user.getEmail() == null || userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
