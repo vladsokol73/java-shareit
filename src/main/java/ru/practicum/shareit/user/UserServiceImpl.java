@@ -61,8 +61,14 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkOnValid(User user) {
-        if (user.getName() == null || user.getEmail() == null || userRepository.existsByEmail(user.getEmail())) {
+        if (user.getName() == null || user.getEmail() == null) {
             throw new ResponseValidateException("ошибка");
+        }
+    }
+
+    private void checkOnDuplicate(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 }
