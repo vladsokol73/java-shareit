@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user, Integer id) {
-        checkOnBlankEmail(user);
         User userUpd = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (user.getEmail() != null) {
             userUpd.setEmail(user.getEmail());
