@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -19,7 +18,5 @@ public class User {
     @NotBlank(message = "имя не может быть пустым")
     private String name;
 
-    @Column(nullable = false)
-    @Email(message = "неверный формат емайл")
     private String email;
 }
