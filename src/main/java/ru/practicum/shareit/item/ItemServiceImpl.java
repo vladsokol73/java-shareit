@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ResponseValidateException("ошибка");
         }
         if (!itemRepository.findById(item.getId()).orElseThrow().getOwner().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Пользователь не найден");
         }
         Item itemUpd = itemRepository.findById(item.getId()).orElseThrow();
         if (item.getName() != null) {
