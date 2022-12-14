@@ -1,13 +1,11 @@
 package ru.practicum.shareit.exceptions;
 
 public class ErrorResponse {
-    private final String error;
+    private int code;
+    private String message;
 
-    public ErrorResponse(String error) {
-        this.error = error;
-    }
-
-    public String getError() {
-        return error;
+    public ErrorResponse(int code, String message) {
+        this.code = code;
+        this.message = message;
     }
 }

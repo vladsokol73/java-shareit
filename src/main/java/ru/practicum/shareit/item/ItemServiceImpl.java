@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.ResponseValidateException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDtoDate;
 import ru.practicum.shareit.item.model.Comment;
@@ -36,10 +34,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item add(Item item) {
         if (item.getName().isEmpty() || item.getAvailable() == null || item.getDescription() == null) {
-            throw new ResponseValidateException("Не передано одно из полей");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         if (userRepository.findById(item.getOwner()).isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
         log.info("добавлена вещь /{}/", item);
@@ -49,10 +47,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item update(Item item, Integer userId) {
         if (itemRepository.findById(item.getId()).isEmpty() || userRepository.findById(userId).isEmpty()) {
-            throw new ResponseValidateException("ошибка");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         if (!itemRepository.findById(item.getId()).orElseThrow().getOwner().equals(userId)) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         Item itemUpd = itemRepository.findById(item.getId()).orElseThrow();
         if (item.getName() != null) {

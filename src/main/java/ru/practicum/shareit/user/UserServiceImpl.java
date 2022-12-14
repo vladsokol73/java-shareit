@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.exceptions.ResponseValidateException;
 
 import java.util.Collection;
 
@@ -27,12 +26,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    private void checkOnValid(User user) {
+        if (user.getName() == null || user.getEmail() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Override
     public User add(User user) {
         checkOnValid(user);
-        checkOnDuplicate(user);
-        checkOnBlankEmail(user);
-        checkOnValidEmail(user);
         log.info("добавлен пользователь /{}/", user);
         return userRepository.save(user);
 
@@ -61,29 +63,5 @@ public class UserServiceImpl implements UserService {
     public void deleteAll() {
         userRepository.deleteAll();
         log.info("удалены все пользователи");
-    }
-
-    private void checkOnValid(User user) {
-        if (user.getName() == null || user.getEmail() == null) {
-            throw new ResponseValidateException("ошибка: имя пользователя или почта не были отправлены");
-        }
-    }
-
-    private void checkOnDuplicate(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    private void checkOnBlankEmail(User user) {
-        if (user.getEmail().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    private void checkOnValidEmail(User user) {
-        if (!user.getEmail().contains("@") || !user.getEmail().contains(".")) {
-            throw new ResponseValidateException(("ошибка: не корректная почта"));
-        }
     }
 }
