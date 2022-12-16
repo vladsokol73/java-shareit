@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getStatus() == Status.APPROVED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (!findItem(booking.getItem()).getOwner().equals(userId)) {
+        if (findItem(booking.getItem()).getOwner().equals(userId)) {
             log.info("updApprove>>NotFoundItem>>>");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
