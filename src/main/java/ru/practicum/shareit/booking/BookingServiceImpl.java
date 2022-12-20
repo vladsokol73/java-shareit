@@ -39,14 +39,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void checkOnValidBeforeAdd(Booking booking, Integer ownerId) {
-        if (itemRepository.findById(booking.getItem()).isEmpty()
-                || userRepository.findById(booking.getBookerId()).isEmpty()) {
+      Item itemCheck = itemRepository.findById(booking.getItem())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (userRepository.findById(booking.getBookerId()).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         if (booking.getBookerId() == null || booking.getStart() == null || booking.getEnd() == null
                 || booking.getItem() == null
-                || !itemRepository.findById(booking.getItem())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getAvailable()
+                || !itemCheck.getAvailable()
                 || booking.getEnd().isBefore(booking.getStart())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -54,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getStart().isBefore(LocalDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (itemRepository.findById(booking.getItem()).orElseThrow().getOwner().equals(ownerId)) {
+        if (itemCheck.getOwner().equals(ownerId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
