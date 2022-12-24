@@ -49,13 +49,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item update(Item item, Integer userId) {
-        if (itemRepository.findById(item.getId()).isEmpty() || userRepository.findById(userId).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        if (!itemRepository.findById(item.getId()).orElseThrow().getOwner().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
         Item itemUpd = itemRepository.findById(item.getId()).orElseThrow();
+        if (!itemUpd.getOwner().equals(userId) || userRepository.findById(userId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         if (item.getName() != null) {
             itemUpd.setName(item.getName());
         }
