@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
@@ -52,7 +52,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> getByUserCurrent(Integer userId, LocalDateTime date, Pageable pageable);
 
     @Query("select b from Booking b where b.bookerId=?1 and b.item=?2 ")
-    Collection<Booking> getByBookerAndItem(Integer bookerId, Integer itemId);
+    List<Booking> getByBookerAndItem(Integer bookerId, Integer itemId);
 
     @Query("select count (b) from Booking b join Item i on i.id=b.item and b.bookerId=?1 " +
             "and b.bookerId <> i.owner")

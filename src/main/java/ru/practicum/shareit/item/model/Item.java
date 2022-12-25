@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
+import lombok.ToString;
+import ru.practicum.shareit.booking.Booking;
 
 import javax.persistence.*;
 
@@ -23,4 +25,12 @@ public class Item {
 
     @Column(name = "request")
     private Integer requestId;
+
+    @Transient
+    @ToString.Exclude
+    private Booking lastBooking;
+
+    @Transient
+    @ToString.Exclude
+    private Booking nextBooking;
 }

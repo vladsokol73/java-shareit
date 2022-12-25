@@ -4,8 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.List;
 import java.util.Set;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
@@ -18,7 +20,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     Set<Item> findByRequestId(Integer requestId);
 
-    @Query(value = "select last_value from items_id_seq", nativeQuery = true)
-    Integer findLastValue();
+    @Query("select i from Item i where i.owner.id = :ownerId order by i.id")
+    List<Item> findByOwner(@Param("ownerId") int ownerId);
 
 }

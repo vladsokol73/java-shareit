@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.StatusDto;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,15 +34,15 @@ public class BookingController {
     }
 
     @GetMapping
-    public Collection<BookingDto> findAllByUser(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                @RequestParam(defaultValue = "ALL") StatusDto state,
-                                                @RequestParam(required = false, defaultValue = "0") Integer from,
-                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
+    public List<BookingDto> findAllByUser(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                          @RequestParam(defaultValue = "ALL") StatusDto state,
+                                          @RequestParam(required = false, defaultValue = "0") Integer from,
+                                          @RequestParam(required = false, defaultValue = "10") Integer size) {
         return bookingService.findAllByUser(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public Collection<BookingDto> findAllByOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
+    public List<BookingDto> findAllByOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                                  @RequestParam(defaultValue = "ALL") StatusDto state,
                                                  @RequestParam(required = false, defaultValue = "0") Integer from,
                                                  @RequestParam(required = false, defaultValue = "10") Integer size) {

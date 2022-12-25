@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -19,8 +20,6 @@ import java.util.Collection;
 public class ItemController {
     private final ItemService itemService;
     private final ItemMapper itemMapper;
-
-    private final CommentMapper commentMapper;
 
     @PostMapping
     public ItemDto add(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer userId) {
@@ -41,14 +40,14 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDtoDate> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                          @RequestParam(required = false, defaultValue = "0") Integer from,
-                                          @RequestParam(required = false, defaultValue = "10") Integer size) {
+    public List<ItemDtoDate> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                    @RequestParam(required = false, defaultValue = "0") Integer from,
+                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
         return itemService.getAll(userId, from, size);
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> getByNameOrDesc(@RequestParam String text,
+    public List<ItemDto> getByNameOrDesc(@RequestParam String text,
                                                @RequestParam(required = false, defaultValue = "0") Integer from,
                                                @RequestParam(required = false, defaultValue = "10") Integer size) {
         ArrayList<ItemDto> listDto = new ArrayList<>();

@@ -35,14 +35,14 @@ public class ItemRepositoryInMemory implements ItemRepositoryOld {
     }
 
     private void validateOnUpdate(Item item, Integer id) {
-        if (items.get((int) id) == null
-                || (int) items.get((int) id).getOwner() != (int) item.getOwner()) {
+        if (items.get(id) == null
+                || items.get(id).getOwner() != item.getOwner()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
     private void validateOnDelete(Integer itemId, Integer userId) {
-        if (items.get((int) itemId) == null || items.get((int) itemId).getOwner() != (int) userId) {
+        if (items.get(itemId) == null || items.get(itemId).getOwner() != userId) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }

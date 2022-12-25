@@ -49,10 +49,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item update(Item item, Integer userId) {
-        Item itemUpd = itemRepository.findById(item.getId()).orElseThrow();
-        if (!itemUpd.getOwner().equals(userId) || userRepository.findById(userId).isEmpty()) {
+        if (itemRepository.findById(item.getId()).isEmpty() || userRepository.findById(userId).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        if (!itemRepository.findById(item.getId()).orElseThrow().getOwner().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        Item itemUpd = itemRepository.findById(item.getId()).orElseThrow();
         if (item.getName() != null) {
             itemUpd.setName(item.getName());
         }
@@ -76,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<Item> getByNameOrDesc(String text, Integer page, Integer size) {
+    public List<Item> getByNameOrDesc(String text, Integer page, Integer size) {
         if (text.equals("")) {
             return new ArrayList<Item>();
         }
@@ -87,9 +90,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDtoDate> getAll(Integer userId, Integer page, Integer size) {
+    public List<ItemDtoDate> getAll(Integer userId, Integer page, Integer size) {
+        List<Item> items = itemRepository.findByOwner(userId);
+        LocalDateTime now = LocalDateTime.now();
         ArrayList<ItemDtoDate> list = new ArrayList<>();
-        for (Item item : itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList()) {
+        items.forEach(item -> {
             Booking bookingLast = bookingRepository.getLastBooking(item.getId(), LocalDateTime.now());
             Booking bookNext = bookingRepository.getNextBooking(item.getId(), LocalDateTime.now());
             ItemDtoDate itemDtoDate = new ItemDtoDate();
@@ -101,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
             itemDtoDate.setLastBooking(bookingLast);
             itemDtoDate.setNextBooking(bookNext);
             list.add(itemDtoDate);
-        }
+        });
         log.info("запрошены вещи владельца /{}/", userId);
         return list;
     }

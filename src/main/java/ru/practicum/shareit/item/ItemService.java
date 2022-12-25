@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 public interface ItemService {
     Item add(Item item);
@@ -15,9 +16,9 @@ public interface ItemService {
 
     Item getById(Integer id);
 
-    Collection<ItemDtoDate> getAll(Integer userId, Integer page, Integer size);
+    List<ItemDtoDate> getAll(Integer userId, Integer page, Integer size);
 
-    Collection<Item> getByNameOrDesc(String text, Integer page, Integer size);
+    List<Item> getByNameOrDesc(String text, Integer page, Integer size);
 
     void delete(Integer itemId, Integer userId);
 

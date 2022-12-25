@@ -5,6 +5,7 @@ import ru.practicum.shareit.booking.dto.StatusDto;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 public interface BookingService {
     BookingDto add(BookingDto bookingDto, Integer ownerId);
@@ -13,9 +14,9 @@ public interface BookingService {
 
     BookingDto findById(Integer bookingId, Integer userId);
 
-    Collection<BookingDto> findAllByUser(Integer userId, StatusDto state, Integer page, Integer size);
+    List<BookingDto> findAllByUser(Integer userId, StatusDto state, Integer page, Integer size);
 
-    Collection<BookingDto> findAllByOwner(Integer userId, StatusDto state, Integer page, Integer size);
+    List<BookingDto> findAllByOwner(Integer userId, StatusDto state, Integer page, Integer size);
 
     void updBookingDate(Integer id, LocalDateTime dateTime);
 
