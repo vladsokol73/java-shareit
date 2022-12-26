@@ -15,7 +15,7 @@ public interface ItemService {
 
     Item getById(Integer id);
 
-    Collection<ItemDtoDate> getAll(Integer userId, Integer page, Integer size);
+    Collection<Item> getAll(Integer userId, Integer page, Integer size);
 
     Collection<Item> getByNameOrDesc(String text, Integer page, Integer size);
 

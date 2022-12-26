@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDtoDate;
 import ru.practicum.shareit.item.model.Comment;
@@ -19,6 +20,7 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -90,8 +92,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDtoDate> getAll(Integer userId, Integer page, Integer size) {
+    public Collection<Item> getAll(Integer userId, Integer page, Integer size) {
         ArrayList<ItemDtoDate> list = new ArrayList<>();
+
         for (Item item : itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList()) {
             Booking bookingLast = bookingRepository.getLastBooking(item.getId(), LocalDateTime.now());
             Booking bookNext = bookingRepository.getNextBooking(item.getId(), LocalDateTime.now());
@@ -106,7 +109,10 @@ public class ItemServiceImpl implements ItemService {
             list.add(itemDtoDate);
         }
         log.info("запрошены вещи владельца /{}/", userId);
-        return list;
+        return itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size))
+                .stream()
+                .map(this::setBookings)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -170,5 +176,25 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public User getUser(Integer id) {
         return userRepository.findById(id).orElseThrow();
+    }
+
+    private Item setBookings(Item item) {
+        Optional<Booking> lastBooking = getLastBookingForItem(item.getId());
+        Optional<Booking> nextBooking = getNextBookingForItem(item.getId());
+
+        item.setLastBooking(lastBooking.orElse(null));
+        item.setNextBooking(nextBooking.orElse(null));
+
+        return item;
+    }
+
+    private Optional<Booking> getLastBookingForItem(int itemId) {
+        return bookingRepository.findFirstByItemIdAndStatusOrderByEnd(itemId,
+                Status.APPROVED);
+    }
+
+    private Optional<Booking> getNextBookingForItem(int itemId) {
+        return bookingRepository.findFirstByItemIdAndStatusOrderByEndDesc(itemId,
+                Status.APPROVED);
     }
 }

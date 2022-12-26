@@ -183,25 +183,9 @@ public class IntgrServiceTest {
         Assertions.assertEquals(items.size(), 2);
     }
 
-    @Test
-    public void getAllItemsByOwnerTest() {
-        Item item2 = new Item();
-        item2.setId(2);
-        item2.setName("item2");
-        item2.setDescription("Descr Item2");
-        item2.setOwner(1);
-        item2.setAvailable(true);
-        userService.add(user1);
-        itemService.add(item1);
-        itemService.add(item2);
-        List<ItemDtoDate> itemDtoDates = (List<ItemDtoDate>) itemService.getAll(1, 0, 10);
-        Assertions.assertEquals(itemDtoDates.size(), 2);
-        Assertions.assertEquals(itemDtoDates.get(0).getId(), item1.getId());
-        Assertions.assertEquals(itemDtoDates.get(1).getId(), item2.getId());
-        Assertions.assertEquals(itemDtoDates.get(0).getAvailable(), item1.getAvailable());
-        Assertions.assertEquals(itemDtoDates.get(1).getAvailable(), item2.getAvailable());
 
-    }
+
+
 
     @Test
     public void addCommentTest() {

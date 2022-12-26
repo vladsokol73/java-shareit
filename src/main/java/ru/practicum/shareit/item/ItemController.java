@@ -41,7 +41,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDtoDate> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId,
+    public Collection<Item> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                           @RequestParam(required = false, defaultValue = "0") Integer from,
                                           @RequestParam(required = false, defaultValue = "10") Integer size) {
         return itemService.getAll(userId, from, size);
