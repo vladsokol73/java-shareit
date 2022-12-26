@@ -93,21 +93,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<Item> getAll(Integer userId, Integer page, Integer size) {
-        ArrayList<ItemDtoDate> list = new ArrayList<>();
-
-        for (Item item : itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList()) {
-            Booking bookingLast = bookingRepository.getLastBooking(item.getId(), LocalDateTime.now());
-            Booking bookNext = bookingRepository.getNextBooking(item.getId(), LocalDateTime.now());
-            ItemDtoDate itemDtoDate = new ItemDtoDate();
-            itemDtoDate.setId(item.getId());
-            itemDtoDate.setName(item.getName());
-            itemDtoDate.setDescription(item.getDescription());
-            itemDtoDate.setAvailable(item.getAvailable());
-            itemDtoDate.setOwner(item.getOwner());
-            itemDtoDate.setLastBooking(bookingLast);
-            itemDtoDate.setNextBooking(bookNext);
-            list.add(itemDtoDate);
-        }
         log.info("запрошены вещи владельца /{}/", userId);
         return itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size))
                 .stream()
