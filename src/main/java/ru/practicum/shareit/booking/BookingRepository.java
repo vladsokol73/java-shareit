@@ -58,8 +58,4 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "and b.bookerId <> i.owner")
     Integer getCountBookingsByUser(Integer userId);
 
-    Optional<Booking> findFirstByItemIdAndStatusOrderByEnd(Integer itemId, Status status);
-
-    Optional<Booking> findFirstByItemIdAndStatusOrderByEndDesc(Integer itemId, Status status);
-
 }

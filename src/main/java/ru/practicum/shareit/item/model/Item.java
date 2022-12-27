@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
-import ru.practicum.shareit.booking.Booking;
 
 import javax.persistence.*;
 
@@ -24,9 +23,4 @@ public class Item {
 
     @Column(name = "request")
     private Integer requestId;
-
-    @Transient
-    private Booking lastBooking;
-    @Transient
-    private Booking nextBooking;
 }

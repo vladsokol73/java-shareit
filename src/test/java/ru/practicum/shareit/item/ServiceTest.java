@@ -159,7 +159,23 @@ public class ServiceTest {
         Assertions.assertEquals(itemResult, item1);
     }
 
+    @Test
+    public void getAllItemsTest() {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Item> list = List.of(item1, item2);
+        Page<Item> page = new PageImpl<>(list, pageable, list.size());
 
+        Mockito
+                .when(itemRepository.findAllByOwnerOrderById(1, pageable))
+                .thenReturn(page);
+        Collection<ItemDtoDate> items = itemService.getAll(1, 0, 10);
+        List<ItemDtoDate> itemDtoDateList = (List<ItemDtoDate>) items;
+        Assertions.assertEquals(items.size(), 2);
+        Assertions.assertEquals(itemDtoDateList.get(0).getId(), 1);
+        Assertions.assertEquals(itemDtoDateList.get(1).getId(), 2);
+        Assertions.assertEquals(itemDtoDateList.get(0).getName(), item1.getName());
+        Assertions.assertEquals(itemDtoDateList.get(1).getName(), item2.getName());
+    }
 
     @Test
     public void getItemWithDateTest() {

@@ -186,9 +186,33 @@ public class ControllerTest {
 
     }
 
+    @Test
+    public void getAllItemsByOwnerCheckStatusIsOkTest() throws Exception {
+        when(itemService.getAll(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenReturn(List.of(itemDtoDate1, itemDtoDate2));
 
+        mvc.perform(get("/items")
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
+    }
 
+    @Test
+    public void getAllItemsByOwnerCheckJsonTest() throws Exception {
+        when(itemService.getAll(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenReturn(List.of(itemDtoDate1, itemDtoDate2));
+
+        mvc.perform(get("/items")
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(itemDtoDate1, itemDtoDate2))));
+
+    }
 
     @Test
     public void getByNameOrDescItemCheckSatusIsOkTest() throws Exception {
