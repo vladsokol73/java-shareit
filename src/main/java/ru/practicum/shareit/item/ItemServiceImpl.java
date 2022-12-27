@@ -93,10 +93,10 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemDtoDate> getAll(Integer userId, Integer page, Integer size) {
         ArrayList<ItemDtoDate> list = new ArrayList<>();
         List<Item> itemList = itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList();
-        List<Booking> bookingsLast = bookingRepository.getByOwnerPast(userId, LocalDateTime.now()
-                ,PageRequest.of(page, size)).toList();
-        List<Booking> bookingsNext = bookingRepository.getByOwnerFuture(userId, LocalDateTime.now()
-                ,PageRequest.of(page, size)).toList();
+        List<Booking> bookingsLast =
+                bookingRepository.getByOwnerPast(userId, LocalDateTime.now(), PageRequest.of(page, size)).toList();
+        List<Booking> bookingsNext =
+                bookingRepository.getByOwnerFuture(userId, LocalDateTime.now(), PageRequest.of(page, size)).toList();
         for (Item item : itemList) {
             Booking bookingLast = null;
             Booking bookNext = null;
