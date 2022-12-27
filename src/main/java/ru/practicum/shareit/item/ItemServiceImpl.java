@@ -100,14 +100,17 @@ public class ItemServiceImpl implements ItemService {
         for (Item item : itemList) {
             Booking bookingLast = null;
             Booking bookNext = null;
+            int idItem = item.getId();
             for (Booking booking : bookingsLast) {
-                if (item.getId() == booking.getItem()) {
+                int idBookingItem = booking.getItem();
+                if (idItem == idBookingItem) {
                     bookingLast = booking;
                 }
             }
 
             for (Booking booking : bookingsNext) {
-                if (item.getId() == booking.getItem()) {
+                int idBookingItem = booking.getItem();
+                if (idItem == idBookingItem) {
                     bookNext = booking;
                 }
             }
