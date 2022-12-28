@@ -89,9 +89,22 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Collection<ItemDtoDate> getAll(Integer userId, Integer page, Integer size) {
         ArrayList<ItemDtoDate> list = new ArrayList<>();
-        for (Item item : itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList()) {
-            Booking bookingLast = bookingRepository.getLastBooking(item.getId(), LocalDateTime.now());
-            Booking bookNext = bookingRepository.getNextBooking(item.getId(), LocalDateTime.now());
+        List<Item> itemList = itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList();
+        List<Booking> bookingsLast =
+                bookingRepository.getByOwnerPast(userId, LocalDateTime.now(), PageRequest.of(page, size)).toList();
+        HashMap<Integer, Booking> bookingHashMapLast = new HashMap<>();
+        for (Booking booking : bookingsLast) {
+            bookingHashMapLast.put(booking.getItem(), booking);
+        }
+        List<Booking> bookingsNext =
+                bookingRepository.getByOwnerFuture(userId, LocalDateTime.now(), PageRequest.of(page, size)).toList();
+        HashMap<Integer, Booking> bookingHashMapNext = new HashMap<>();
+        for (Booking booking : bookingsNext) {
+            bookingHashMapNext.put(booking.getItem(), booking);
+        }
+        for (Item item : itemList) {
+            Booking bookingLast = bookingHashMapLast.get(item.getId());
+            Booking bookNext = bookingHashMapNext.get(item.getId());
             ItemDtoDate itemDtoDate = new ItemDtoDate();
             itemDtoDate.setId(item.getId());
             itemDtoDate.setName(item.getName());

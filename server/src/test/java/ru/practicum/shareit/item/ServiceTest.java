@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
@@ -20,7 +19,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -159,23 +157,6 @@ public class ServiceTest {
         Assertions.assertEquals(item1, itemResult);
     }
 
-    @Test
-    public void getAllItemsTest() {
-        Pageable pageable = PageRequest.of(0, 10);
-        List<Item> list = List.of(item1, item2);
-        Page<Item> page = new PageImpl<>(list, pageable, list.size());
-
-        Mockito
-                .when(itemRepository.findAllByOwnerOrderById(1, pageable))
-                .thenReturn(page);
-        Collection<ItemDtoDate> items = itemService.getAll(1, 0, 10);
-        List<ItemDtoDate> itemDtoDateList = (List<ItemDtoDate>) items;
-        Assertions.assertEquals(items.size(), 2);
-        Assertions.assertEquals(1, itemDtoDateList.get(0).getId());
-        Assertions.assertEquals(2, itemDtoDateList.get(1).getId());
-        Assertions.assertEquals(item1.getName(), itemDtoDateList.get(0).getName());
-        Assertions.assertEquals(item2.getName(), itemDtoDateList.get(1).getName());
-    }
 
     @Test
     public void getItemWithDateTest() {
