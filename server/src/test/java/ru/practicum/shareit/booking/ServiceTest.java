@@ -144,6 +144,39 @@ public class ServiceTest {
     }
 
     @Test
+    public void findAllBookingByUserCheckStatusDtoAllTest() {
+        userService.add(user1);
+        userService.add(user2);
+        itemService.add(item);
+        bookingService.add(bookingDto1, user2.getId());
+        bookingService.add(bookingDto2, user2.getId());
+        Collection<BookingDto> result = bookingService.findAllByUser(user2.getId(), StatusDto.ALL, 0, 10);
+        Assertions.assertEquals(List.of(bookingDto2, bookingDto1), result);
+    }
+
+    @Test
+    public void findAllBookingByUserCheckStatusDtoWaitingTest() {
+        userService.add(user1);
+        userService.add(user2);
+        itemService.add(item);
+        bookingService.add(bookingDto1, user2.getId());
+        bookingService.add(bookingDto2, user2.getId());
+        Collection<BookingDto> result = bookingService.findAllByUser(user2.getId(), StatusDto.WAITING, 0, 10);
+        Assertions.assertEquals(List.of(bookingDto2, bookingDto1), result);
+    }
+
+    @Test
+    public void findAllBookingByUserCheckStatusDtoFutureTest() {
+        userService.add(user1);
+        userService.add(user2);
+        itemService.add(item);
+        bookingService.add(bookingDto1, user2.getId());
+        bookingService.add(bookingDto2, user2.getId());
+        Collection<BookingDto> result = bookingService.findAllByUser(user2.getId(), StatusDto.FUTURE, 0, 10);
+        Assertions.assertEquals(List.of(bookingDto2, bookingDto1), result);
+    }
+
+    @Test
     public void findAllBookingByUserCheckStatusDtoPastTest() {
         userService.add(user1);
         userService.add(user2);
@@ -163,6 +196,39 @@ public class ServiceTest {
         bookingService.add(bookingDto2, user2.getId());
         Collection<BookingDto> result = bookingService.findAllByUser(user2.getId(), StatusDto.CURRENT, 0, 10);
         Assertions.assertEquals(List.of(), result);
+    }
+
+    @Test
+    public void findAllBookingByOwnerCheckStatusDtoAllTest() {
+        userService.add(user1);
+        userService.add(user2);
+        itemService.add(item);
+        bookingService.add(bookingDto1, user2.getId());
+        bookingService.add(bookingDto2, user2.getId());
+        Collection<BookingDto> result = bookingService.findAllByOwner(user1.getId(), StatusDto.ALL, 0, 10);
+        Assertions.assertEquals(List.of(bookingDto2, bookingDto1), result);
+    }
+
+    @Test
+    public void findAllBookingByOwnerCheckStatusDtoWaitingTest() {
+        userService.add(user1);
+        userService.add(user2);
+        itemService.add(item);
+        bookingService.add(bookingDto1, user2.getId());
+        bookingService.add(bookingDto2, user2.getId());
+        Collection<BookingDto> result = bookingService.findAllByOwner(user1.getId(), StatusDto.WAITING, 0, 10);
+        Assertions.assertEquals(List.of(bookingDto2, bookingDto1), result);
+    }
+
+    @Test
+    public void findAllBookingByOwnerCheckStatusDtoFutureTest() {
+        userService.add(user1);
+        userService.add(user2);
+        itemService.add(item);
+        bookingService.add(bookingDto1, user2.getId());
+        bookingService.add(bookingDto2, user2.getId());
+        Collection<BookingDto> result = bookingService.findAllByOwner(user1.getId(), StatusDto.FUTURE, 0, 10);
+        Assertions.assertEquals(List.of(bookingDto2, bookingDto1), result);
     }
 
     @Test

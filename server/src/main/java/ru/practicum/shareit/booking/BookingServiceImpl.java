@@ -40,11 +40,18 @@ public class BookingServiceImpl implements BookingService {
                 || userRepository.findById(booking.getBookerId()).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        if (!itemRepository.findById(booking.getItem())
+        if (booking.getBookerId() == null || booking.getStart() == null || booking.getEnd() == null
+                || booking.getItem() == null
+                || !itemRepository.findById(booking.getItem())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).getAvailable()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
+        if (booking.getStart().isBefore(LocalDateTime.now())
+                || booking.getEnd().isBefore(LocalDateTime.now())
+                || booking.getEnd().isBefore(booking.getStart())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         if (itemRepository.findById(booking.getItem()).orElseThrow().getOwner().equals(ownerId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -110,20 +117,35 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDto> findAllByUser(Integer userId, StatusDto state, Integer page, Integer size) {
+        if (page < 0 || size < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         checkValidUser(userId);
-        List<Item> itemList = itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList();
+
+        Integer countBookings = bookingRepository.getCountBookingsByUser(userId);
+        if (countBookings - page < size) {
+            size = countBookings - page;
+        }
+        List<Item> itemList = itemRepository.findAll();
         HashMap<Integer, Item> itemHashMap = new HashMap<>();
         for (Item item : itemList) {
             itemHashMap.put(item.getId(), item);
         }
+        List<User> userList = userRepository.findAll();
+        HashMap<Integer, User> userHashMap = new HashMap<>();
+        for (User user : userList) {
+            userHashMap.put(user.getId(), user);
+        }
         ArrayList<BookingDto> listDto = new ArrayList<>();
-        User user = userRepository.findById(userId).orElseThrow();
         switch (state) {
             case ALL:
-
                 for (Booking booking : bookingRepository.getBookingsByUser(userId,
                         PageRequest.of(page, size)).getContent()) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 log.info("запрошены бронирования пользователя /{}/,status=/{}/,page=/{}/,size=/{}/",
@@ -134,25 +156,41 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
             case CANCELED:
                 for (Booking booking : findAllByUserAndStatus(userId, bookingMapper.toStatus(state), page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 break;
             case FUTURE:
                 for (Booking booking : findAllByUserFuture(userId, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 break;
             case PAST:
                 for (Booking booking : findAllByUserPast(userId, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 break;
             case CURRENT:
                 for (Booking booking : findAllByUserCurrent(userId, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
         }
@@ -183,18 +221,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDto> findAllByOwner(Integer userId, StatusDto state, Integer page, Integer size) {
+        if (page < 0 || size < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         checkValidUser(userId);
-        List<Item> itemList = itemRepository.findAllByOwnerOrderById(userId, PageRequest.of(page, size)).toList();
+        List<Item> itemList = itemRepository.findAll();
         HashMap<Integer, Item> itemHashMap = new HashMap<>();
         for (Item item : itemList) {
             itemHashMap.put(item.getId(), item);
         }
+        List<User> userList = userRepository.findAll();
+        HashMap<Integer, User> userHashMap = new HashMap<>();
+        for (User user : userList) {
+            userHashMap.put(user.getId(), user);
+        }
         ArrayList<BookingDto> listDto = new ArrayList<>();
-        User user = userRepository.findById(userId).orElseThrow();
         switch (state) {
             case ALL:
                 for (Booking booking : bookingRepository.getAllByOwner(userId, PageRequest.of(page, size)).toList()) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 log.info("запрошены бронирования вещей владельца /{}/", userId);
@@ -205,25 +254,41 @@ public class BookingServiceImpl implements BookingService {
             case CANCELED:
                 Status status = bookingMapper.toStatus(state);
                 for (Booking booking : findAllByOwnerAndStatus(userId, status, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 break;
             case FUTURE:
                 for (Booking booking : findAllByOwnerFuture(userId, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 break;
             case PAST:
                 for (Booking booking : findAllByOwnerPast(userId, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
                 break;
             case CURRENT:
                 for (Booking booking : findAllByOwnerCurrent(userId, page, size)) {
+                    if (itemHashMap.get(booking.getItem()) == null || userHashMap.get(booking.getBookerId()) == null) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                    }
                     Item item = itemHashMap.get(booking.getItem());
+                    User user = userHashMap.get(booking.getBookerId());
                     listDto.add(bookingMapper.toDto(booking, item, user));
                 }
         }
