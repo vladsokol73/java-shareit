@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: ru.practicum.shareit.booking.RepositoryTest
+-------------------------------------------------------------------------------
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.969 s - in ru.practicum.shareit.booking.RepositoryTest
